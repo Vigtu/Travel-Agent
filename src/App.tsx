@@ -3,7 +3,7 @@ import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
 import InitialPlanningScreen from '@/components/InitialPlanningScreen';
 import TripPlannerScreen from '@/components/TripPlannerScreen';
-import { TripDetails } from '@/types';
+import type { TripDetails } from '@/types';
 
 function App() {
   const [tripDetails, setTripDetails] = useState<TripDetails | null>(null);

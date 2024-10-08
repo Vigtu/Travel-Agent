@@ -1,4 +1,4 @@
-import { TripDetails } from '@/types';
+import type { TripDetails } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { CheckCircle } from 'lucide-react';

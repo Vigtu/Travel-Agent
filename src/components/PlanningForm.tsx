@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { TripDetails } from '@/types';
+import type { TripDetails } from '@/types';
 
 const formSchema = z.object({
   tripName: z.string().min(2, 'Trip name must be at least 2 characters'),
