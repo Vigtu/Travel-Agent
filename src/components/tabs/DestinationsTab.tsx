@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -8,22 +8,34 @@ import { MapPin } from 'lucide-react';
 import ResponsiveSidebar from '@/components/ResponsiveSidebar';
 import AnimatedAccordion from '@/components/AnimatedAccordion';
 import TravelConfirmationModal from '@/components/TravelConfirmationModal';
+import useLocalStorage from '@/hooks/useLocalStorage';
 
 interface DestinationsTabProps {
   tripDetails: TripDetails;
 }
 
 const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
-  const [destinations, setDestinations] = useState<{ name: string }[]>([]);
+  const [destinations, setDestinations] = useLocalStorage<{ name: string }[]>('destinations', []);
   const [newDestination, setNewDestination] = useState('');
-  const [showNewFeatures, setShowNewFeatures] = useState(false);
+  const [showNewFeatures, setShowNewFeatures] = useLocalStorage('showNewFeatures', false);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isConfirmButtonEnabled, setIsConfirmButtonEnabled] = useState(false);
+
+  useEffect(() => {
+    setIsConfirmButtonEnabled(destinations.length >= 1 && destinations.length <= 3);
+  }, [destinations]);
 
   const addDestination = () => {
-    if (newDestination && destinations.length < 10) {
+    if (newDestination && destinations.length < 3) {
       setDestinations([...destinations, { name: newDestination }]);
       setNewDestination('');
+    } else if (destinations.length >= 3) {
+      toast({
+        title: "Maximum Destinations Reached",
+        description: "You can only add up to 3 destinations.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -45,8 +57,8 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
   };
 
   const mockTripData = {
-    introduction: "Welcome to your amazing trip to France! Get ready for an unforgettable experience.",
-    introImage: "/images/france-intro.jpg",
+    introduction: "Welcome to your amazing trip! Get ready for an unforgettable experience.",
+    introImage: "/images/trip-intro.jpg",
     flightDetails: {
       departure: "New York (JFK) - June 15, 2023",
       return: "Paris (CDG) - June 22, 2023",
@@ -54,13 +66,13 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
       price: "$850",
       duration: "7h 25m"
     },
-    flightImage: "/images/air-france-logo.png"
+    flightImage: "/images/airline-logo.png"
   };
 
   return (
     <div className="flex h-[calc(100vh-20rem)]">
-      <ResponsiveSidebar>
-        <div className="space-y-4">
+      <ResponsiveSidebar className="w-full max-w-md">
+        <div className="space-y-4 px-4">
           <Input
             placeholder="Add destination"
             value={newDestination}
@@ -68,11 +80,15 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
             onKeyPress={(e) => e.key === 'Enter' && addDestination()}
             className="border-gray-300 focus:border-primary focus:ring-primary"
           />
-          <Button onClick={addDestination} disabled={destinations.length >= 10} className="w-full bg-primary hover:bg-primary-600 text-white">
+          <Button 
+            onClick={addDestination} 
+            disabled={destinations.length >= 3 || !newDestination} 
+            className="w-full bg-primary hover:bg-primary-600 text-white"
+          >
             Add Destination
           </Button>
         </div>
-        <div className="mt-4">
+        <div className="mt-4 px-4">
           {destinations.map((dest, index) => (
             <div key={dest.name} className="flex items-center justify-between p-2 hover:bg-gray-100">
               <span className="text-gray-800">{dest.name}</span>
@@ -83,9 +99,15 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
           ))}
         </div>
         <Separator className="my-4" />
-        <Button onClick={() => setShowConfirmModal(true)} className="w-full bg-primary hover:bg-primary-600 text-white">
-          Confirm Destinations
-        </Button>
+        <div className="px-4">
+          <Button 
+            onClick={() => setShowConfirmModal(true)} 
+            className="w-full bg-primary hover:bg-primary-600 text-white"
+            disabled={!isConfirmButtonEnabled}
+          >
+            Confirm Destinations
+          </Button>
+        </div>
         <AnimatedAccordion tripData={mockTripData} showNewFeatures={showNewFeatures} />
       </ResponsiveSidebar>
       <div className="flex-1 bg-gray-100 p-4">
