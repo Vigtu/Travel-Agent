@@ -1,25 +1,28 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { TripDetails } from '@/types';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import type { TripDetails } from '@/types';
 import { toast } from '@/hooks/use-toast';
-import { MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin } from 'lucide-react';
+import ResponsiveSidebar from '@/components/ResponsiveSidebar';
+import AnimatedAccordion from '@/components/AnimatedAccordion';
+import TravelConfirmationModal from '@/components/TravelConfirmationModal';
 
 interface DestinationsTabProps {
   tripDetails: TripDetails;
 }
 
 const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
-  const [destinations, setDestinations] = useState<string[]>([]);
+  const [destinations, setDestinations] = useState<{ name: string }[]>([]);
   const [newDestination, setNewDestination] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showNewFeatures, setShowNewFeatures] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const addDestination = () => {
     if (newDestination && destinations.length < 10) {
-      setDestinations([...destinations, newDestination]);
+      setDestinations([...destinations, { name: newDestination }]);
       setNewDestination('');
     }
   };
@@ -28,68 +31,63 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
     setDestinations(destinations.filter((_, i) => i !== index));
   };
 
-  const confirmDestinations = () => {
+  const handleConfirmDestinations = async () => {
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsLoading(false);
     toast({
       title: "Destinations Confirmed",
       description: "Your destinations have been saved successfully.",
     });
+    setShowNewFeatures(true);
+    setShowConfirmModal(false);
+  };
+
+  const mockTripData = {
+    introduction: "Welcome to your amazing trip to France! Get ready for an unforgettable experience.",
+    introImage: "/images/france-intro.jpg",
+    flightDetails: {
+      departure: "New York (JFK) - June 15, 2023",
+      return: "Paris (CDG) - June 22, 2023",
+      airline: "Air France",
+      price: "$850",
+      duration: "7h 25m"
+    },
+    flightImage: "/images/air-france-logo.png"
   };
 
   return (
     <div className="flex h-[calc(100vh-20rem)]">
-      <div className={`bg-white border-r ${isSidebarOpen ? 'w-80' : 'w-16'} transition-all duration-300 flex flex-col`}>
-        <Button
-          variant="ghost"
-          className="self-end p-2"
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        >
-          {isSidebarOpen ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
-        </Button>
-        {isSidebarOpen && (
-          <>
-            <div className="p-4 space-y-4">
-              <Input
-                placeholder="Add destination"
-                value={newDestination}
-                onChange={(e) => setNewDestination(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && addDestination()}
-                className="border-gray-300 focus:border-primary focus:ring-primary"
-              />
-              <Button onClick={addDestination} disabled={destinations.length >= 10} className="w-full bg-primary hover:bg-primary-600 text-white">
-                Add Destination
+      <ResponsiveSidebar>
+        <div className="space-y-4">
+          <Input
+            placeholder="Add destination"
+            value={newDestination}
+            onChange={(e) => setNewDestination(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && addDestination()}
+            className="border-gray-300 focus:border-primary focus:ring-primary"
+          />
+          <Button onClick={addDestination} disabled={destinations.length >= 10} className="w-full bg-primary hover:bg-primary-600 text-white">
+            Add Destination
+          </Button>
+        </div>
+        <div className="mt-4">
+          {destinations.map((dest, index) => (
+            <div key={dest.name} className="flex items-center justify-between p-2 hover:bg-gray-100">
+              <span className="text-gray-800">{dest.name}</span>
+              <Button variant="ghost" size="sm" onClick={() => removeDestination(index)} className="text-gray-500 hover:text-red-500">
+                X
               </Button>
             </div>
-            <ScrollArea className="flex-1">
-              {destinations.map((dest, index) => (
-                <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-100">
-                  <span className="text-gray-800">{dest}</span>
-                  <Button variant="ghost" size="sm" onClick={() => removeDestination(index)} className="text-gray-500 hover:text-red-500">
-                    X
-                  </Button>
-                </div>
-              ))}
-            </ScrollArea>
-            <Separator />
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button className="m-4 bg-primary hover:bg-primary-600 text-white">Confirm Destinations</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Confirm Your Destinations</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to confirm these destinations? This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={confirmDestinations} className="bg-primary hover:bg-primary-600 text-white">Confirm</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
-        )}
-      </div>
+          ))}
+        </div>
+        <Separator className="my-4" />
+        <Button onClick={() => setShowConfirmModal(true)} className="w-full bg-primary hover:bg-primary-600 text-white">
+          Confirm Destinations
+        </Button>
+        <AnimatedAccordion tripData={mockTripData} showNewFeatures={showNewFeatures} />
+      </ResponsiveSidebar>
       <div className="flex-1 bg-gray-100 p-4">
         <div className="bg-white rounded-lg shadow-sm p-8 h-full flex items-center justify-center">
           <div className="text-center">
@@ -101,6 +99,13 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
           </div>
         </div>
       </div>
+      <TravelConfirmationModal
+        showConfirmModal={showConfirmModal}
+        destinations={destinations}
+        isLoading={isLoading}
+        onConfirm={handleConfirmDestinations}
+        onCancel={() => setShowConfirmModal(false)}
+      />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { TripDetails } from '@/types';
+import type { TripDetails } from '@/types';
 import DestinationsTab from '@/components/tabs/DestinationsTab';
 import ActivitiesTab from '@/components/tabs/ActivitiesTab';
 import AccommodationsTab from '@/components/tabs/AccommodationsTab';
@@ -49,7 +49,6 @@ const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
           <Progress 
             value={progress} 
             className="w-full h-0.5 bg-gray-200" 
-            indicatorClassName="bg-primary transition-all duration-300 ease-in-out"
             aria-label={`Trip planning progress: ${progress}% complete`}
           />
           <TabsContent value="destinations">
