@@ -30,16 +30,16 @@ const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
   };
 
   return (
-    <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-3xl font-bold text-gray-800">{tripDetails.tripName}</h2>
-        <p className="text-lg text-gray-600 mt-2">
-          {format(tripDetails.startDate, 'MMMM d, yyyy')} - {format(tripDetails.endDate, 'MMMM d, yyyy')}
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-50">
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-2">
+        <h2 className="text-2xl font-bold text-gray-800">{tripDetails.name}</h2>
+        <p className="text-sm text-gray-600 mt-1">
+          {tripDetails.startDate && format(tripDetails.startDate, 'MMMM d, yyyy')} - {tripDetails.endDate && format(tripDetails.endDate, 'MMMM d, yyyy')}
         </p>
       </div>
-      <div className="bg-white rounded-lg shadow-sm">
-        <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-5 p-1 bg-gray-100 rounded-t-lg">
+      <div className="flex-grow bg-white rounded-lg shadow-sm flex flex-col">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="flex-grow flex flex-col">
+          <TabsList className="grid w-full grid-cols-5 p-1 bg-gray-100">
             <TabsTrigger value="destinations" className="data-[state=active]:bg-white data-[state=active]:text-primary">Destinations</TabsTrigger>
             <TabsTrigger value="activities" className="data-[state=active]:bg-white data-[state=active]:text-primary">Activities</TabsTrigger>
             <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-primary">Accommodations</TabsTrigger>
@@ -51,21 +51,23 @@ const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
             className="w-full h-0.5 bg-gray-200" 
             aria-label={`Trip planning progress: ${progress}% complete`}
           />
-          <TabsContent value="destinations">
-            <DestinationsTab tripDetails={tripDetails} />
-          </TabsContent>
-          <TabsContent value="activities">
-            <ActivitiesTab tripDetails={tripDetails} />
-          </TabsContent>
-          <TabsContent value="accommodations">
-            <AccommodationsTab tripDetails={tripDetails} />
-          </TabsContent>
-          <TabsContent value="tips">
-            <TipsTab tripDetails={tripDetails} />
-          </TabsContent>
-          <TabsContent value="conclusion">
-            <ConclusionTab tripDetails={tripDetails} />
-          </TabsContent>
+          <div className="flex-grow">
+            <TabsContent value="destinations" className="h-full">
+              <DestinationsTab tripDetails={tripDetails} />
+            </TabsContent>
+            <TabsContent value="activities" className="h-full">
+              <ActivitiesTab tripDetails={tripDetails} />
+            </TabsContent>
+            <TabsContent value="accommodations" className="h-full">
+              <AccommodationsTab tripDetails={tripDetails} />
+            </TabsContent>
+            <TabsContent value="tips" className="h-full">
+              <TipsTab tripDetails={tripDetails} />
+            </TabsContent>
+            <TabsContent value="conclusion" className="h-full">
+              <ConclusionTab tripDetails={tripDetails} />
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </div>
