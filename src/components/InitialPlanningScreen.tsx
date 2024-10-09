@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import PlanningForm from '@/components/PlanningForm';
+import TravelPlannerForm from '@/components/TravelPlannerForm';
 import type { TripDetails } from '@/types';
 
 interface InitialPlanningScreenProps {
@@ -25,7 +25,7 @@ const InitialPlanningScreen = ({ onPlanningComplete }: InitialPlanningScreenProp
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-gray-800">Plan Your Trip</DialogTitle>
           </DialogHeader>
-          <PlanningForm onSubmit={(details) => {
+          <TravelPlannerForm onSubmit={(details) => {
             onPlanningComplete(details);
             setOpen(false);
           }} />
