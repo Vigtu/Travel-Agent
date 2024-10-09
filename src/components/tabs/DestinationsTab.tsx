@@ -70,8 +70,8 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-20rem)]">
-      <ResponsiveSidebar className="w-full max-w-md">
+    <div className="flex h-full">
+      <ResponsiveSidebar className="w-1/3 min-w-[300px] max-w-[400px]">
         <div className="space-y-4 px-4">
           <Input
             placeholder="Add destination"
@@ -88,7 +88,7 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
             Add Destination
           </Button>
         </div>
-        <div className="mt-4 px-4">
+        <div className="mt-4 px-4 max-h-[200px] overflow-y-auto">
           {destinations.map((dest, index) => (
             <div key={dest.name} className="flex items-center justify-between p-2 hover:bg-gray-100">
               <span className="text-gray-800">{dest.name}</span>
@@ -110,7 +110,7 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
         </div>
         <AnimatedAccordion tripData={mockTripData} showNewFeatures={showNewFeatures} />
       </ResponsiveSidebar>
-      <div className="flex-1 bg-gray-100 p-4">
+      <div className="flex-1 bg-gray-100 p-4 overflow-hidden">
         <div className="bg-white rounded-lg shadow-sm p-8 h-full flex items-center justify-center">
           <div className="text-center">
             <MapPin className="w-16 h-16 mx-auto mb-4 text-primary" />

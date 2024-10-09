@@ -24,7 +24,7 @@ export default function AnimatedAccordion({ tripData, showNewFeatures }: Animate
   const [expandedItem, setExpandedItem] = useState<string | undefined>(undefined)
 
   return (
-    <div className={`transition-all duration-500 ease-in-out overflow-hidden ${showNewFeatures ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+    <div className={`transition-all duration-500 ease-in-out ${showNewFeatures ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
       <Accordion
         type="single"
         collapsible
@@ -32,8 +32,8 @@ export default function AnimatedAccordion({ tripData, showNewFeatures }: Animate
         onValueChange={setExpandedItem}
         className="w-full"
       >
-        <AccordionItem value="introduction">
-          <AccordionTrigger>
+        <AccordionItem value="introduction" className="overflow-visible">
+          <AccordionTrigger className="h-10">
             <div className={`transition-transform duration-300 ${expandedItem === "introduction" ? 'scale-100' : 'scale-110'}`}>
               Introduction
             </div>
@@ -47,8 +47,8 @@ export default function AnimatedAccordion({ tripData, showNewFeatures }: Animate
             <p className="text-sm text-gray-600">{tripData.introduction}</p>
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="book-flight">
-          <AccordionTrigger>
+        <AccordionItem value="book-flight" className="overflow-visible">
+          <AccordionTrigger className="h-10">
             <div className={`transition-transform duration-300 ${expandedItem === "book-flight" ? 'scale-100' : 'scale-110'}`}>
               Book Flight
             </div>
