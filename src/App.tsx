@@ -8,6 +8,11 @@ import type { TripDetails } from '@/types';
 function App() {
   const [tripDetails, setTripDetails] = useState<TripDetails | null>(null);
 
+  const handlePlanningComplete = (details: TripDetails) => {
+    setTripDetails(details);
+    console.log("Trip details saved:", details); // For debugging
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -15,7 +20,7 @@ function App() {
         {tripDetails ? (
           <TripPlannerScreen tripDetails={tripDetails} />
         ) : (
-          <InitialPlanningScreen onPlanningComplete={setTripDetails} />
+          <InitialPlanningScreen onPlanningComplete={handlePlanningComplete} />
         )}
       </main>
       <Toaster />

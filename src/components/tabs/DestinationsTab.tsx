@@ -9,6 +9,7 @@ import ResponsiveSidebar from '@/components/ResponsiveSidebar';
 import AnimatedAccordion from '@/components/AnimatedAccordion';
 import TravelConfirmationModal from '@/components/TravelConfirmationModal';
 import useLocalStorage from '@/hooks/useLocalStorage';
+import { getTravelPlan } from '@/api/travelApi';
 
 interface DestinationsTabProps {
   tripDetails: TripDetails;
@@ -21,6 +22,7 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isConfirmButtonEnabled, setIsConfirmButtonEnabled] = useState(false);
+  const [apiResponse, setApiResponse] = useState<string | null>(null);
 
   useEffect(() => {
     setIsConfirmButtonEnabled(destinations.length >= 1 && destinations.length <= 3);
@@ -45,15 +47,26 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
 
   const handleConfirmDestinations = async () => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    toast({
-      title: "Destinations Confirmed",
-      description: "Your destinations have been saved successfully.",
-    });
-    setShowNewFeatures(true);
-    setShowConfirmModal(false);
+    try {
+      const response = await getTravelPlan(tripDetails, destinations.map(d => d.name));
+      setApiResponse(response);
+      console.log('API Response:', response); // Log the API response
+      toast({
+        title: "Destinations Confirmed",
+        description: "Your travel plan has been generated successfully.",
+      });
+      setShowNewFeatures(true);
+    } catch (error) {
+      console.error('API Error:', error); // Log any API errors
+      toast({
+        title: "Error",
+        description: "Failed to generate travel plan. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+      setShowConfirmModal(false);
+    }
   };
 
   const mockTripData = {

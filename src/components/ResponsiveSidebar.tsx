@@ -6,10 +6,11 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { ChevronLeft, ChevronRight, MapPin, Info, Plane } from 'lucide-react'
 
 interface ResponsiveSidebarProps {
-  children: React.ReactNode
+  children: React.ReactNode;
+  className?: string;
 }
 
-export default function ResponsiveSidebar({ children }: ResponsiveSidebarProps) {
+export default function ResponsiveSidebar({ children, className }: ResponsiveSidebarProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const toggleSidebar = () => {
@@ -17,7 +18,7 @@ export default function ResponsiveSidebar({ children }: ResponsiveSidebarProps) 
   }
 
   return (
-    <div className={`relative transition-all duration-300 ${isSidebarOpen ? 'w-80' : 'w-16'} bg-white border-r`}>
+    <div className={`relative transition-all duration-300 ${isSidebarOpen ? 'w-80' : 'w-16'} bg-white border-r ${className}`}>
       <div className="flex items-center justify-between p-4 border-b">
         {isSidebarOpen ? (
           <h3 className="text-lg font-semibold">Your Destinations</h3>

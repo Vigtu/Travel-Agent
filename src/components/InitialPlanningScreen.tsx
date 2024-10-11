@@ -11,6 +11,11 @@ interface InitialPlanningScreenProps {
 const InitialPlanningScreen = ({ onPlanningComplete }: InitialPlanningScreenProps) => {
   const [open, setOpen] = useState(false);
 
+  const handleFormSubmit = (details: TripDetails) => {
+    onPlanningComplete(details);
+    setOpen(false);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] bg-gray-50">
       <h1 className="text-5xl font-bold mb-4 text-gray-800">Where do you want to go?</h1>
@@ -25,10 +30,7 @@ const InitialPlanningScreen = ({ onPlanningComplete }: InitialPlanningScreenProp
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-gray-800">Plan Your Trip</DialogTitle>
           </DialogHeader>
-          <TravelPlannerForm onSubmit={(details) => {
-            onPlanningComplete(details);
-            setOpen(false);
-          }} />
+          <TravelPlannerForm onSubmit={handleFormSubmit} />
         </DialogContent>
       </Dialog>
     </div>
