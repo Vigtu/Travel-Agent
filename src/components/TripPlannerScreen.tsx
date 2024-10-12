@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import type { TripDetails } from '@/types';
+import type { TripDetails, ParsedTripPlan } from '@/types';
 import DestinationsTab from '@/components/tabs/DestinationsTab';
 import ActivitiesTab from '@/components/tabs/ActivitiesTab';
 import AccommodationsTab from '@/components/tabs/AccommodationsTab';
 import TipsTab from '@/components/tabs/TipsTab';
 import ConclusionTab from '@/components/tabs/ConclusionTab';
+import { parseTripPlan } from '@/utils/tripPlanParser';
 
 interface TripPlannerScreenProps {
   tripDetails: TripDetails;
@@ -16,6 +17,7 @@ interface TripPlannerScreenProps {
 const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
   const [activeTab, setActiveTab] = useState('destinations');
   const [progress, setProgress] = useState(0);
+  const [tripPlan, setTripPlan] = useState<ParsedTripPlan | null>(null);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -27,6 +29,11 @@ const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
       conclusion: 100,
     };
     setProgress(progressMap[value]);
+  };
+
+  const handleTripPlanUpdate = (apiResponse: string) => {
+    const parsedPlan = parseTripPlan(apiResponse);
+    setTripPlan(parsedPlan);
   };
 
   return (
@@ -41,10 +48,10 @@ const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
         <Tabs value={activeTab} onValueChange={handleTabChange} className="flex-grow flex flex-col">
           <TabsList className="grid w-full grid-cols-5 p-1 bg-gray-100">
             <TabsTrigger value="destinations" className="data-[state=active]:bg-white data-[state=active]:text-primary">Destinations</TabsTrigger>
-            <TabsTrigger value="activities" className="data-[state=active]:bg-white data-[state=active]:text-primary">Activities</TabsTrigger>
-            <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-primary">Accommodations</TabsTrigger>
-            <TabsTrigger value="tips" className="data-[state=active]:bg-white data-[state=active]:text-primary">Tips</TabsTrigger>
-            <TabsTrigger value="conclusion" className="data-[state=active]:bg-white data-[state=active]:text-primary">Conclusion</TabsTrigger>
+            <TabsTrigger value="activities" className="data-[state=active]:bg-white data-[state=active]:text-primary" disabled={!tripPlan}>Activities</TabsTrigger>
+            <TabsTrigger value="accommodations" className="data-[state=active]:bg-white data-[state=active]:text-primary" disabled={!tripPlan}>Accommodations</TabsTrigger>
+            <TabsTrigger value="tips" className="data-[state=active]:bg-white data-[state=active]:text-primary" disabled={!tripPlan}>Tips</TabsTrigger>
+            <TabsTrigger value="conclusion" className="data-[state=active]:bg-white data-[state=active]:text-primary" disabled={!tripPlan}>Conclusion</TabsTrigger>
           </TabsList>
           <Progress 
             value={progress} 
@@ -53,19 +60,19 @@ const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
           />
           <div className="flex-grow">
             <TabsContent value="destinations" className="h-full">
-              <DestinationsTab tripDetails={tripDetails} />
+              <DestinationsTab tripDetails={tripDetails} onTripPlanUpdate={handleTripPlanUpdate} />
             </TabsContent>
             <TabsContent value="activities" className="h-full">
-              <ActivitiesTab tripDetails={tripDetails} />
+              <ActivitiesTab tripPlan={tripPlan} />
             </TabsContent>
             <TabsContent value="accommodations" className="h-full">
-              <AccommodationsTab tripDetails={tripDetails} />
+              <AccommodationsTab tripPlan={tripPlan} />
             </TabsContent>
             <TabsContent value="tips" className="h-full">
-              <TipsTab tripDetails={tripDetails} />
+              <TipsTab tripPlan={tripPlan} />
             </TabsContent>
             <TabsContent value="conclusion" className="h-full">
-              <ConclusionTab tripDetails={tripDetails} />
+              <ConclusionTab tripPlan={tripPlan} />
             </TabsContent>
           </div>
         </Tabs>

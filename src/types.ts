@@ -10,3 +10,37 @@ export interface TripDetails {
   numChildren: number;
   origin: string;
 }
+
+export interface ParsedTripPlan {
+  title: string;
+  introduction: string;
+  destination: string;
+  flightDetails: {
+    departure: string;
+    return: string;
+    airline: string;
+    price: string;
+    duration: string;
+  };
+  accommodations: Array<{
+    name: string;
+    image: string;
+    price: string;
+    description: string;
+    rating: number;
+  }>;
+  activities: Array<{
+    day: number;
+    date: string;
+    weather: string;
+    items: Array<{
+      time: string;
+      description: string;
+    }>;
+  }>;
+  packingList: string[];
+  budgetBreakdown: string[];
+  localCustoms: string[];
+  practicalTips: string[];
+  conclusion: string;
+}

@@ -2,20 +2,21 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import type { TripDetails } from '@/types';
+import type { TripDetails, ParsedTripPlan } from '@/types';
 import { toast } from '@/hooks/use-toast';
-import { MapPin } from 'lucide-react';
+import { MapPin, Plane } from 'lucide-react';
 import ResponsiveSidebar from '@/components/ResponsiveSidebar';
-import AnimatedAccordion from '@/components/AnimatedAccordion';
 import TravelConfirmationModal from '@/components/TravelConfirmationModal';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { getTravelPlan } from '@/api/travelApi';
+import { parseTripPlan } from '@/utils/tripPlanParser';
 
 interface DestinationsTabProps {
   tripDetails: TripDetails;
+  onTripPlanUpdate: (apiResponse: string) => void;
 }
 
-const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
+const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps) => {
   const [destinations, setDestinations] = useLocalStorage<{ name: string }[]>('destinations', []);
   const [newDestination, setNewDestination] = useState('');
   const [showNewFeatures, setShowNewFeatures] = useLocalStorage('showNewFeatures', false);
@@ -23,6 +24,7 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isConfirmButtonEnabled, setIsConfirmButtonEnabled] = useState(false);
   const [apiResponse, setApiResponse] = useState<string | null>(null);
+  const [tripPlan, setTripPlan] = useState<ParsedTripPlan | null>(null);
 
   useEffect(() => {
     setIsConfirmButtonEnabled(destinations.length >= 1 && destinations.length <= 3);
@@ -49,15 +51,17 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
     setIsLoading(true);
     try {
       const response = await getTravelPlan(tripDetails, destinations.map(d => d.name));
-      setApiResponse(response);
-      console.log('API Response:', response); // Log the API response
+      const parsedPlan = parseTripPlan(response);
+      setTripPlan(parsedPlan);
+      onTripPlanUpdate(response);
+      console.log('API Response:', response);
       toast({
         title: "Destinations Confirmed",
         description: "Your travel plan has been generated successfully.",
       });
       setShowNewFeatures(true);
     } catch (error) {
-      console.error('API Error:', error); // Log any API errors
+      console.error('API Error:', error);
       toast({
         title: "Error",
         description: "Failed to generate travel plan. Please try again.",
@@ -67,19 +71,6 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
       setIsLoading(false);
       setShowConfirmModal(false);
     }
-  };
-
-  const mockTripData = {
-    introduction: "Welcome to your amazing trip! Get ready for an unforgettable experience.",
-    introImage: "/images/trip-intro.jpg",
-    flightDetails: {
-      departure: "New York (JFK) - June 15, 2023",
-      return: "Paris (CDG) - June 22, 2023",
-      airline: "Air France",
-      price: "$850",
-      duration: "7h 25m"
-    },
-    flightImage: "/images/airline-logo.png"
   };
 
   return (
@@ -121,16 +112,44 @@ const DestinationsTab = ({ tripDetails }: DestinationsTabProps) => {
             Confirm Destinations
           </Button>
         </div>
-        <AnimatedAccordion tripData={mockTripData} showNewFeatures={showNewFeatures} />
+        {tripPlan && (
+          <>
+            <Separator className="my-4" />
+            <div className="px-4">
+              <h3 className="text-lg font-semibold mb-2">Introduction</h3>
+              <p className="text-sm text-gray-600 mb-4">{tripPlan.introduction}</p>
+              <h3 className="text-lg font-semibold mb-2">Flight Details</h3>
+              <div className="space-y-2">
+                <p><strong>Departure:</strong> {tripPlan.flightDetails.departure}</p>
+                <p><strong>Return:</strong> {tripPlan.flightDetails.return}</p>
+                <p><strong>Airline:</strong> {tripPlan.flightDetails.airline}</p>
+                <p><strong>Price:</strong> {tripPlan.flightDetails.price}</p>
+                <p><strong>Duration:</strong> {tripPlan.flightDetails.duration}</p>
+              </div>
+            </div>
+          </>
+        )}
       </ResponsiveSidebar>
       <div className="flex-1 bg-gray-100 p-4 overflow-hidden">
         <div className="bg-white rounded-lg shadow-sm p-8 h-full flex items-center justify-center">
           <div className="text-center">
-            <MapPin className="w-16 h-16 mx-auto mb-4 text-primary" />
-            <h3 className="text-2xl font-bold mb-2 text-gray-800">Map View</h3>
-            <p className="text-gray-600">
-              Your destinations will be displayed here on an interactive map.
-            </p>
+            {tripPlan ? (
+              <>
+                <Plane className="w-16 h-16 mx-auto mb-4 text-primary" />
+                <h3 className="text-2xl font-bold mb-2 text-gray-800">Flight Details</h3>
+                <p className="text-gray-600">
+                  Your flight to {tripPlan.destination} is booked and ready!
+                </p>
+              </>
+            ) : (
+              <>
+                <MapPin className="w-16 h-16 mx-auto mb-4 text-primary" />
+                <h3 className="text-2xl font-bold mb-2 text-gray-800">Map View</h3>
+                <p className="text-gray-600">
+                  Your destinations will be displayed here on an interactive map.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>

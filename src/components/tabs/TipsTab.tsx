@@ -1,61 +1,41 @@
-import type { TripDetails } from '@/types';
+import type { ParsedTripPlan } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Luggage, Wallet, Globe, MessageSquare } from 'lucide-react';
+import { Luggage, Wallet, Globe, MessageSquare, Volume2 } from 'lucide-react';
 
 interface TipsTabProps {
-  tripDetails: TripDetails;
+  tripPlan: ParsedTripPlan | null;
 }
 
-const TipsTab = ({ tripDetails }: TipsTabProps) => {
+const TipsTab = ({ tripPlan }: TipsTabProps) => {
+  if (!tripPlan) {
+    return <div>Loading tips...</div>;
+  }
+
   const tips = [
     {
       title: 'Packing Essentials',
       description: 'Don\'t forget these items',
       icon: Luggage,
-      content: [
-        'Comfortable walking shoes',
-        'Weather-appropriate clothing',
-        'Travel adapter',
-        'Passport and travel documents',
-        'Medications and first-aid kit',
-      ],
+      content: tripPlan.packingList,
     },
     {
       title: 'Budget Tips',
       description: 'Save money on your trip',
       icon: Wallet,
-      content: [
-        'Use public transportation',
-        'Eat at local restaurants',
-        'Look for free attractions and events',
-        'Book accommodations in advance',
-        'Use a travel rewards credit card',
-      ],
+      content: tripPlan.budgetBreakdown,
     },
     {
       title: 'Local Customs',
       description: 'Respect the local culture',
       icon: Globe,
-      content: [
-        'Learn basic phrases in the local language',
-        'Dress appropriately for religious sites',
-        'Be aware of tipping customs',
-        'Respect local traditions and customs',
-        'Ask permission before taking photos of people',
-      ],
+      content: tripPlan.localCustoms,
     },
     {
-      title: 'Communication',
-      description: 'Stay connected during your trip',
+      title: 'Practical Tips',
+      description: 'Make the most of your trip',
       icon: MessageSquare,
-      content: [
-        'Get an international data plan',
-        'Download offline maps',
-        'Use translation apps',
-        'Keep emergency contact information handy',
-        'Join local social media groups for travelers',
-      ],
+      content: tripPlan.practicalTips,
     },
   ];
 
@@ -73,13 +53,29 @@ const TipsTab = ({ tripDetails }: TipsTabProps) => {
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-5 space-y-2">
-                {tip.content.map((item) => (
-                  <li key={item}>{item}</li>
+                {tip.content.map((item, index) => (
+                  <li key={`tip-${tip.title}-${index}`}>{item}</li>
                 ))}
               </ul>
             </CardContent>
           </Card>
         ))}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Volume2 className="w-6 h-6 mr-2" />
+              Useful Phrases
+            </CardTitle>
+            <CardDescription>Learn these local phrases</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="list-disc pl-5 space-y-2">
+              {tripPlan.localCustoms.map((phrase, index) => (
+                <li key={`phrase-${index}`}>{phrase}</li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       </div>
     </ScrollArea>
   );

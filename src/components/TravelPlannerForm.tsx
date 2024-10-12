@@ -54,7 +54,7 @@ export default function TravelPlannerForm({ onSubmit }: TravelPlannerFormProps) 
       formData.destinations.trim() !== '' &&
       formData.startDate !== null &&
       formData.endDate !== null &&
-      formData.budget > 0 &&
+      formData.budget >= 0 && // Alterado para permitir 0
       formData.flightPreferences !== '' &&
       formData.origin.trim() !== ''
     )
@@ -174,17 +174,16 @@ export default function TravelPlannerForm({ onSubmit }: TravelPlannerFormProps) 
       </div>
 
       <div>
-        <Label htmlFor="budget">* Budget (USD)</Label>
+        <Label htmlFor="budget">Budget (USD)</Label>
         <Input
           type="number"
           id="budget"
           name="budget"
           value={formData.budget}
           onChange={handleInputChange}
-          placeholder="Enter your budget"
+          placeholder="Enter your budget (0 for no limit)"
           className="mt-1"
-          required
-          min="1"
+          min="0"
         />
       </div>
 
