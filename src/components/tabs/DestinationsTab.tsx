@@ -10,7 +10,6 @@ import TravelConfirmationModal from '@/components/TravelConfirmationModal';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { getTravelPlan } from '@/api/travelApi';
 import { parseTripPlan } from '@/utils/tripPlanParser';
-import BudgetBreakdownChart from '@/components/BudgetBreakdownChart';
 
 interface DestinationsTabProps {
   tripDetails: TripDetails;

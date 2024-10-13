@@ -100,7 +100,7 @@ const parseAccommodations = (content: string): ParsedTripPlan['accommodations'] 
       if (line.startsWith('![')) accommodation.image = line.match(/\((.*?)\)/)?.[1] || '';
       if (line.startsWith('- Price:')) accommodation.price = line.split(':')[1]?.trim() || '';
       if (line.startsWith('- ') && !line.startsWith('- Price:')) {
-        accommodation.description += line.replace('- ', '').trim() + ' ';
+        accommodation.description += `${line.replace('- ', '').trim()} `;
       }
     }
 
@@ -118,7 +118,7 @@ const parseActivities = (content: string): ParsedTripPlan['activities'] => {
   for (const section of daySections) {
     const [dayTitle, ...dayContent] = section.split('\n');
     const activity: ParsedTripPlan['activities'][0] = {
-      day: parseInt(dayTitle.split(':')[0].replace('Day ', '')),
+      day: Number.parseInt(dayTitle.split(':')[0].replace('Day ', ''), 10),
       date: dayTitle.split(':')[1]?.trim() || '',
       weather: '',
       image: '',

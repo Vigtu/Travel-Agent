@@ -58,9 +58,9 @@ const ActivitiesTab = ({ tripPlan }: ActivitiesTabProps) => {
 
   const formatDescription = (description: string) => {
     const parts = description.split(/(\*\*.*?\*\*)/g);
-    return parts.map((part, index) => {
+    return parts.map((part) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={`strong-${description}-${index}`}>{part.slice(2, -2)}</strong>;
+        return <strong key={`strong-${part}`}>{part.slice(2, -2)}</strong>;
       }
       return part;
     });
