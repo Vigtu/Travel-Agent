@@ -2,8 +2,9 @@ import React from 'react';
 import type { ParsedTripPlan } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CheckCircle, Plane, Sun, MapPin } from 'lucide-react';
+import { CheckCircle, Plane, Sun, MapPin, Calendar, Clock, DollarSign, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 
 interface ConclusionTabProps {
   tripPlan: ParsedTripPlan | null;
@@ -31,6 +32,11 @@ const ConclusionTab: React.FC<ConclusionTabProps> = ({ tripPlan }) => {
       y: 0,
       opacity: 1
     }
+  };
+
+  // Function to remove markdown from text
+  const removeMarkdown = (text: string) => {
+    return text.replace(/!\[.*?\]\(.*?\)/g, '').trim();
   };
 
   return (
@@ -63,7 +69,48 @@ const ConclusionTab: React.FC<ConclusionTabProps> = ({ tripPlan }) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <p className="text-gray-700 leading-relaxed">{tripPlan.conclusion}</p>
+              <p className="text-gray-700 leading-relaxed">{removeMarkdown(tripPlan.conclusion)}</p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center text-2xl font-bold text-gray-800">
+                <Plane className="w-8 h-8 mr-3 text-blue-500" />
+                Flight Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center">
+                <Calendar className="w-6 h-6 text-gray-500 mr-2" />
+                <p><strong>Departure:</strong> {tripPlan.flightDetails.departure || 'Not specified'}</p>
+              </div>
+              <div className="flex items-center">
+                <Calendar className="w-6 h-6 text-gray-500 mr-2" />
+                <p><strong>Return:</strong> {tripPlan.flightDetails.return || 'Not specified'}</p>
+              </div>
+              <div className="flex items-center">
+                <Plane className="w-6 h-6 text-gray-500 mr-2" />
+                <p><strong>Airline:</strong> {tripPlan.flightDetails.airline || 'Not specified'}</p>
+              </div>
+              <div className="flex items-center">
+                <Clock className="w-6 h-6 text-gray-500 mr-2" />
+                <p><strong>Duration:</strong> {tripPlan.flightDetails.duration || 'Not specified'}</p>
+              </div>
+              <div className="flex items-center">
+                <DollarSign className="w-6 h-6 text-gray-500 mr-2" />
+                <p><strong>Price:</strong> {tripPlan.flightDetails.price || 'Not specified'}</p>
+              </div>
+              {tripPlan.flightDetails.bookingUrl && (
+                <Button 
+                  className="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white"
+                  onClick={() => window.open(tripPlan.flightDetails.bookingUrl, '_blank')}
+                >
+                  Book Flight <ExternalLink className="w-4 h-4 ml-2" />
+                </Button>
+              )}
             </CardContent>
           </Card>
         </motion.div>

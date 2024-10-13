@@ -21,6 +21,7 @@ export interface ParsedTripPlan {
     airline: string;
     price: string;
     duration: string;
+    bookingUrl: string; // Este campo está presente na interface
   };
   accommodations: Array<{
     name: string;
@@ -33,7 +34,7 @@ export interface ParsedTripPlan {
     day: number;
     date: string;
     weather: string;
-    image?: string; // Added optional image property
+    image?: string;
     items: Array<{
       time: string;
       description: string;
@@ -48,4 +49,5 @@ export interface ParsedTripPlan {
   budgetImage: string;
   cultureImage: string;
   tipsImage: string;
+  conclusionImage: string;
 }

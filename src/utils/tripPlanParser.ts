@@ -13,6 +13,7 @@ export const parseTripPlan = (apiResponse: string): ParsedTripPlan => {
       airline: '',
       price: '',
       duration: '',
+      bookingUrl: '',
     },
     accommodations: [],
     activities: [],
@@ -25,6 +26,7 @@ export const parseTripPlan = (apiResponse: string): ParsedTripPlan => {
     budgetImage: '',
     cultureImage: '',
     tipsImage: '',
+    conclusionImage: '',
   };
 
   for (const section of sections) {
@@ -35,6 +37,7 @@ export const parseTripPlan = (apiResponse: string): ParsedTripPlan => {
       case 'introduction':
         parsedPlan.introduction = sectionContent;
         parsedPlan.destination = sectionContent.split('to ')[1]?.split('!')[0] || '';
+        parsedPlan.flightDetails = parseFlightDetails(sectionContent);
         break;
       case 'flight details':
         parsedPlan.flightDetails = parseFlightDetails(sectionContent);
@@ -63,6 +66,7 @@ export const parseTripPlan = (apiResponse: string): ParsedTripPlan => {
         break;
       case 'conclusion':
         parsedPlan.conclusion = sectionContent;
+        parsedPlan.conclusionImage = extractImage(sectionContent);
         break;
     }
   }
@@ -77,14 +81,23 @@ const parseFlightDetails = (content: string): ParsedTripPlan['flightDetails'] =>
     airline: '',
     price: '',
     duration: '',
+    bookingUrl: '',
   };
 
-  for (const line of content.split('\n')) {
+  const lines = content.split('\n');
+  for (const line of lines) {
     if (line.startsWith('- **Departure**:')) details.departure = line.split(':')[1]?.trim() || '';
     if (line.startsWith('- **Return**:')) details.return = line.split(':')[1]?.trim() || '';
-    if (line.startsWith('- **Airline**:')) details.airline = line.split(':')[1]?.trim() || '';
+    if (line.startsWith('- **Airline**:')) {
+      const airlineInfo = line.split(':')[1]?.trim() || '';
+      details.airline = airlineInfo.split('![')[0].trim(); // Remove a parte da imagem
+    }
     if (line.startsWith('- **Price**:')) details.price = line.split(':')[1]?.trim() || '';
     if (line.startsWith('- **Duration**:')) details.duration = line.split(':')[1]?.trim() || '';
+    if (line.startsWith('[Book your flight here]')) {
+      const match = line.match(/\((.*?)\)/);
+      details.bookingUrl = match ? match[1] : '';
+    }
   }
 
   return details;
