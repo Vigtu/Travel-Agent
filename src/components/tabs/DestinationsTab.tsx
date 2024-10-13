@@ -10,6 +10,7 @@ import TravelConfirmationModal from '@/components/TravelConfirmationModal';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { getTravelPlan } from '@/api/travelApi';
 import { parseTripPlan } from '@/utils/tripPlanParser';
+import BudgetBreakdownChart from '@/components/BudgetBreakdownChart';
 
 interface DestinationsTabProps {
   tripDetails: TripDetails;
@@ -126,6 +127,11 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
                 <p><strong>Price:</strong> {tripPlan.flightDetails.price}</p>
                 <p><strong>Duration:</strong> {tripPlan.flightDetails.duration}</p>
               </div>
+            </div>
+            <Separator className="my-4" />
+            <div className="px-4">
+              <h3 className="text-lg font-semibold mb-2">Budget Breakdown</h3>
+              <BudgetBreakdownChart budgetBreakdown={tripPlan.budgetBreakdown} />
             </div>
           </>
         )}
