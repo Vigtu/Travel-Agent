@@ -18,13 +18,8 @@ const AccommodationsTab = ({ tripPlan }: AccommodationsTabProps) => {
     return <div className="flex items-center justify-center h-full">No accommodation information available.</div>;
   }
 
-  const cleanDescription = (description: string) => {
-    // Remove markdown links and keep only the text
-    return description.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
-  };
-
   return (
-    <ScrollArea className="h-[calc(100vh-20rem)]">
+    <ScrollArea className="h-full">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
         {tripPlan.accommodations.map((accommodation) => (
           <Card key={accommodation.name} className="flex flex-col overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">

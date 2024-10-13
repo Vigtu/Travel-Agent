@@ -11,7 +11,7 @@ interface ConclusionTabProps {
 
 const ConclusionTab: React.FC<ConclusionTabProps> = ({ tripPlan }) => {
   if (!tripPlan) {
-    return <div className="flex items-center justify-center h-full">Loading conclusion...</div>;
+    return <div className="flex items-center justify-center h-full">Loading general information...</div>;
   }
 
   const containerVariants = {
@@ -34,7 +34,7 @@ const ConclusionTab: React.FC<ConclusionTabProps> = ({ tripPlan }) => {
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-20rem)]">
+    <ScrollArea className="h-full">
       <motion.div
         className="p-6 space-y-6"
         variants={containerVariants}
@@ -47,7 +47,7 @@ const ConclusionTab: React.FC<ConclusionTabProps> = ({ tripPlan }) => {
             alt="Trip conclusion"
             className="w-full h-64 object-cover rounded-xl shadow-lg"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-xl" />
           <div className="absolute bottom-4 left-4 right-4 text-white">
             <h2 className="text-3xl font-bold mb-2">Your {tripPlan.destination} Adventure Awaits!</h2>
             <p className="text-lg">Get ready for an unforgettable journey</p>

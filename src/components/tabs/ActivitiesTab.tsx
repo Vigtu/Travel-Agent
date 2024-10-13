@@ -67,7 +67,7 @@ const ActivitiesTab = ({ tripPlan }: ActivitiesTabProps) => {
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-20rem)]">
+    <ScrollArea className="h-full">
       <div className="space-y-8 p-6">
         {tripPlan.activities.map((day, index) => (
           <Card key={`day-${day.day}`} className="bg-gradient-to-br from-green-50 to-blue-50 shadow-lg hover:shadow-xl transition-shadow duration-300 border-none overflow-hidden">
