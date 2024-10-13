@@ -34,7 +34,7 @@ const AccommodationsTab = ({ tripPlan }: AccommodationsTabProps) => {
                 alt={accommodation.name} 
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <h3 className="text-xl font-bold text-white mb-2">{accommodation.name}</h3>
                 <div className="flex items-center mb-2">

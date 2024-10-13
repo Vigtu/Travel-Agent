@@ -44,4 +44,8 @@ export interface ParsedTripPlan {
   localCustoms: string[];
   practicalTips: string[];
   conclusion: string;
+  packingImage: string;
+  budgetImage: string;
+  cultureImage: string;
+  tipsImage: string;
 }

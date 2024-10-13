@@ -21,6 +21,10 @@ export const parseTripPlan = (apiResponse: string): ParsedTripPlan => {
     localCustoms: [],
     practicalTips: [],
     conclusion: '',
+    packingImage: '',
+    budgetImage: '',
+    cultureImage: '',
+    tipsImage: '',
   };
 
   for (const section of sections) {
@@ -43,15 +47,19 @@ export const parseTripPlan = (apiResponse: string): ParsedTripPlan => {
         break;
       case 'packing list':
         parsedPlan.packingList = parseList(sectionContent);
+        parsedPlan.packingImage = extractImage(sectionContent);
         break;
       case 'budget breakdown':
         parsedPlan.budgetBreakdown = parseList(sectionContent);
+        parsedPlan.budgetImage = extractImage(sectionContent);
         break;
       case 'local customs and useful phrases':
         parsedPlan.localCustoms = parseList(sectionContent);
+        parsedPlan.cultureImage = extractImage(sectionContent);
         break;
       case 'practical tips':
         parsedPlan.practicalTips = parseList(sectionContent);
+        parsedPlan.tipsImage = extractImage(sectionContent);
         break;
       case 'conclusion':
         parsedPlan.conclusion = sectionContent;
@@ -144,4 +152,9 @@ const parseActivities = (content: string): ParsedTripPlan['activities'] => {
 
 const parseList = (content: string): string[] => {
   return content.split('\n').filter(line => line.startsWith('- ')).map(line => line.replace('- ', ''));
+};
+
+const extractImage = (content: string): string => {
+  const imageMatch = content.match(/!\[.*?\]\((.*?)\)/);
+  return imageMatch ? imageMatch[1] : '';
 };
