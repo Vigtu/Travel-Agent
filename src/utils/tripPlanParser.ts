@@ -121,11 +121,14 @@ const parseActivities = (content: string): ParsedTripPlan['activities'] => {
       day: parseInt(dayTitle.split(':')[0].replace('Day ', '')),
       date: dayTitle.split(':')[1]?.trim() || '',
       weather: '',
+      image: '',
       items: [],
     };
 
     for (const line of dayContent) {
-      if (line.startsWith('- **Weather**:')) {
+      if (line.startsWith('![')) {
+        activity.image = line.match(/\((.*?)\)/)?.[1] || '';
+      } else if (line.startsWith('- **Weather**:')) {
         activity.weather = line.split(':')[1]?.trim() || '';
       } else if (line.startsWith('- **')) {
         const [time, description] = line.replace('- **', '').split('**: ');

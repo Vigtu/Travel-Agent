@@ -103,14 +103,14 @@ const ActivitiesTab = ({ tripPlan }: ActivitiesTabProps) => {
                             alt={`Day ${day.day} activities`}
                             className="w-full h-full object-cover rounded-lg shadow-md"
                           />
-                          <div className="absolute inset-0 border-8 border-white rounded-lg pointer-events-none"></div>
+                          <div className="absolute inset-0 border-8 border-white rounded-lg pointer-events-none" />
                           <div className="absolute top-2 right-2 bg-white bg-opacity-80 px-2 py-1 rounded text-sm font-semibold text-gray-700">
                             Day {day.day}
                           </div>
                           <div className="absolute bottom-2 left-2 bg-white bg-opacity-80 px-2 py-1 rounded text-xs font-medium text-gray-600">
                             {day.date}
                           </div>
-                          <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity duration-300 rounded-lg"></div>
+                          <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity duration-300 rounded-lg" />
                         </div>
                       </div>
                     )}
