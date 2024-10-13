@@ -71,13 +71,13 @@ const parseFlightDetails = (content: string): ParsedTripPlan['flightDetails'] =>
     duration: '',
   };
 
-  content.split('\n').forEach(line => {
+  for (const line of content.split('\n')) {
     if (line.startsWith('- **Departure**:')) details.departure = line.split(':')[1]?.trim() || '';
     if (line.startsWith('- **Return**:')) details.return = line.split(':')[1]?.trim() || '';
     if (line.startsWith('- **Airline**:')) details.airline = line.split(':')[1]?.trim() || '';
     if (line.startsWith('- **Price**:')) details.price = line.split(':')[1]?.trim() || '';
     if (line.startsWith('- **Duration**:')) details.duration = line.split(':')[1]?.trim() || '';
-  });
+  }
 
   return details;
 };
@@ -86,7 +86,7 @@ const parseAccommodations = (content: string): ParsedTripPlan['accommodations'] 
   const accommodations: ParsedTripPlan['accommodations'] = [];
   const accommodationSections = content.split('\n### ').slice(1);
 
-  accommodationSections.forEach(section => {
+  for (const section of accommodationSections) {
     const [name, ...details] = section.split('\n');
     const accommodation: ParsedTripPlan['accommodations'][0] = {
       name: name.trim(),
@@ -96,17 +96,17 @@ const parseAccommodations = (content: string): ParsedTripPlan['accommodations'] 
       rating: 0,
     };
 
-    details.forEach(line => {
+    for (const line of details) {
       if (line.startsWith('![')) accommodation.image = line.match(/\((.*?)\)/)?.[1] || '';
       if (line.startsWith('- Price:')) accommodation.price = line.split(':')[1]?.trim() || '';
       if (line.startsWith('- ') && !line.startsWith('- Price:')) {
         accommodation.description += line.replace('- ', '').trim() + ' ';
       }
-    });
+    }
 
     accommodation.description = accommodation.description.trim();
     accommodations.push(accommodation);
-  });
+  }
 
   return accommodations;
 };
@@ -115,7 +115,7 @@ const parseActivities = (content: string): ParsedTripPlan['activities'] => {
   const activities: ParsedTripPlan['activities'] = [];
   const daySections = content.split('\n### ').slice(1);
 
-  daySections.forEach(section => {
+  for (const section of daySections) {
     const [dayTitle, ...dayContent] = section.split('\n');
     const activity: ParsedTripPlan['activities'][0] = {
       day: parseInt(dayTitle.split(':')[0].replace('Day ', '')),
@@ -124,17 +124,17 @@ const parseActivities = (content: string): ParsedTripPlan['activities'] => {
       items: [],
     };
 
-    dayContent.forEach(line => {
+    for (const line of dayContent) {
       if (line.startsWith('- **Weather**:')) {
         activity.weather = line.split(':')[1]?.trim() || '';
       } else if (line.startsWith('- **')) {
         const [time, description] = line.replace('- **', '').split('**: ');
         activity.items.push({ time, description });
       }
-    });
+    }
 
     activities.push(activity);
-  });
+  }
 
   return activities;
 };

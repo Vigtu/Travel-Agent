@@ -33,6 +33,7 @@ export interface ParsedTripPlan {
     day: number;
     date: string;
     weather: string;
+    image?: string; // Added optional image property
     items: Array<{
       time: string;
       description: string;

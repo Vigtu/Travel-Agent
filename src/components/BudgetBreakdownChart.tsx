@@ -8,11 +8,12 @@ interface BudgetBreakdownChartProps {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 const BudgetBreakdownChart: React.FC<BudgetBreakdownChartProps> = ({ budgetBreakdown }) => {
-  const data = budgetBreakdown.map(item => {
+  const data = budgetBreakdown.map((item, index) => {
     const [name, value] = item.split(':');
     return {
       name: name.trim(),
-      value: parseFloat(value.replace(/[^0-9.-]+/g, ""))
+      value: Number.parseFloat(value.replace(/[^0-9.-]+/g, "")),
+      id: `cell-${index}`, // Add a unique id for each item
     };
   });
 
@@ -28,8 +29,8 @@ const BudgetBreakdownChart: React.FC<BudgetBreakdownChartProps> = ({ budgetBreak
           fill="#8884d8"
           dataKey="value"
         >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          {data.map((entry) => (
+            <Cell key={entry.id} fill={COLORS[data.indexOf(entry) % COLORS.length]} />
           ))}
         </Pie>
         <Tooltip />
