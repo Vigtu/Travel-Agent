@@ -9,6 +9,8 @@ import TravelConfirmationModal from '@/components/TravelConfirmationModal';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { getTravelPlan } from '@/api/travelApi';
 import { parseTripPlan } from '@/utils/tripPlanParser';
+import { lazy, Suspense } from 'react';
+import MapboxMap from '@/components/tabs/MapboxMap';
 
 interface DestinationsTabProps {
   tripDetails: TripDetails;
@@ -23,6 +25,7 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
   const [isConfirmButtonEnabled, setIsConfirmButtonEnabled] = useState(false);
   const [tripPlan, setTripPlan] = useState<ParsedTripPlan | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
     setIsConfirmButtonEnabled(destinations.length >= 1 && destinations.length <= 3);
@@ -67,6 +70,10 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
       setIsLoading(false);
       setShowConfirmModal(false);
     }
+  };
+
+  const handleMapLoaded = () => {
+    setIsMapLoaded(true);
   };
 
   return (
@@ -126,28 +133,17 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
           </>
         )}
       </div>
-      <div className="flex-1 p-4">
-        <div className="bg-white rounded-lg shadow-sm p-8 h-full flex items-center justify-center">
-          <div className="text-center">
-            {tripPlan ? (
-              <>
-                <MapPin className="w-16 h-16 mx-auto mb-4 text-primary" />
-                <h3 className="text-2xl font-bold mb-2 text-gray-800">Destinations Confirmed</h3>
-                <p className="text-gray-600">
-                  Your trip to {tripPlan.destination} is planned and ready!
-                </p>
-              </>
-            ) : (
-              <>
-                <MapPin className="w-16 h-16 mx-auto mb-4 text-primary" />
-                <h3 className="text-2xl font-bold mb-2 text-gray-800">Map View</h3>
-                <p className="text-gray-600">
-                  Your destinations will be displayed here on an interactive map.
-                </p>
-              </>
-            )}
+      <div className="flex-1">
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-full bg-gray-100">
+            <p className="text-gray-600">Loading map...</p>
           </div>
-        </div>
+        }>
+          <MapboxMap 
+            destinations={destinations} 
+            onMapLoaded={handleMapLoaded}
+          />
+        </Suspense>
       </div>
       <TravelConfirmationModal
         showConfirmModal={showConfirmModal}
