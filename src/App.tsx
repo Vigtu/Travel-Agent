@@ -13,9 +13,13 @@ function App() {
     console.log("Trip details saved:", details); // For debugging
   };
 
+  const handleResetApp = () => {
+    setTripDetails(null);
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header onResetApp={handleResetApp} />
       <main className="container mx-auto px-4 py-8">
         {tripDetails ? (
           <TripPlannerScreen tripDetails={tripDetails} />

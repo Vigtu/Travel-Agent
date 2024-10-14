@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
@@ -16,24 +16,26 @@ interface TripPlannerScreenProps {
 
 const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
   const [activeTab, setActiveTab] = useState('destinations');
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(20); // Inicializa com 20% para "Destinations"
   const [tripPlan, setTripPlan] = useState<ParsedTripPlan | null>(null);
+
+  const progressMap: { [key: string]: number } = {
+    destinations: 20,
+    general: 40,
+    activities: 60,
+    accommodations: 80,
+    tips: 100,
+  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    const progressMap: { [key: string]: number } = {
-      destinations: 20,
-      general: 40,
-      activities: 60,
-      accommodations: 80,
-      tips: 100,
-    };
     setProgress(progressMap[value]);
   };
 
   const handleTripPlanUpdate = (apiResponse: string) => {
     const parsedPlan = parseTripPlan(apiResponse);
     setTripPlan(parsedPlan);
+    // Não alteramos o progresso aqui, apenas atualizamos o tripPlan
   };
 
   return (

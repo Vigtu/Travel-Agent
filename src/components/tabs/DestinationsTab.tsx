@@ -6,10 +6,9 @@ import type { TripDetails, ParsedTripPlan } from '@/types';
 import { toast } from '@/hooks/use-toast';
 import { MapPin, Plus, X } from 'lucide-react';
 import TravelConfirmationModal from '@/components/TravelConfirmationModal';
-import useLocalStorage from '@/hooks/useLocalStorage';
 import { getTravelPlan } from '@/api/travelApi';
 import { parseTripPlan } from '@/utils/tripPlanParser';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import MapboxMap from '@/components/tabs/MapboxMap';
 
 interface DestinationsTabProps {
@@ -25,7 +24,6 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
   const [isConfirmButtonEnabled, setIsConfirmButtonEnabled] = useState(false);
   const [tripPlan, setTripPlan] = useState<ParsedTripPlan | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [mapKey, setMapKey] = useState(0);
 
   useEffect(() => {
@@ -83,10 +81,6 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
       setIsLoading(false);
       setShowConfirmModal(false);
     }
-  };
-
-  const handleMapLoaded = () => {
-    setIsMapLoaded(true);
   };
 
   return (
@@ -155,7 +149,6 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
           <MapboxMap 
             key={mapKey}
             destinations={destinations} 
-            onMapLoaded={handleMapLoaded}
           />
         </Suspense>
       </div>

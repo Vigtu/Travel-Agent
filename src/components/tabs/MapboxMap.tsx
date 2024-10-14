@@ -8,15 +8,6 @@ interface MapboxMapProps {
   onMapLoaded?: () => void;
 }
 
-interface MapState {
-  center: [number, number];
-  zoom: number;
-  pitch: number;
-  bearing: number;
-}
-
-const STORAGE_KEY = 'mapboxMapState';
-
 const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<mapboxgl.Map | null>(null);
@@ -26,25 +17,28 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
   const saveMapState = () => {
     if (mapInstance.current) {
       const center = mapInstance.current.getCenter();
-      const state: MapState = {
+      const state = {
         center: [center.lng, center.lat],
         zoom: mapInstance.current.getZoom(),
         pitch: mapInstance.current.getPitch(),
         bearing: mapInstance.current.getBearing(),
       };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem('mapboxMapState', JSON.stringify(state));
     }
   };
 
-  const loadMapState = (): MapState | null => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    return savedState ? JSON.parse(savedState) : null;
-  };
-
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiZXNjb3QzMDMiLCJhIjoiY2w5YW1zN3hoM2ZxeTN2bGY4bWRvYmFmbSJ9.X2v3G1ADSvdkXXqziwaLLg';
+    const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+    if (!accessToken) {
+      console.error('Mapbox access token is not set');
+      setMapError('Mapbox access token is missing. Please check your environment configuration.');
+      return;
+    }
+
+    mapboxgl.accessToken = accessToken;
     
     const initializeMap = async () => {
       try {
@@ -73,7 +67,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
           map.setConfigProperty('basemap', 'show3DObjects', true);
 
           mapInstance.current = map;
-          onMapLoaded && onMapLoaded();
+          onMapLoaded?.();
           updateMarkers();
         });
 
@@ -105,7 +99,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
     if (!mapInstance.current) return;
 
     // Remove existing markers
-    markersRef.current.forEach(marker => marker.remove());
+    for (const marker of markersRef.current) {
+      marker.remove();
+    }
     markersRef.current = [];
 
     const bounds = new mapboxgl.LngLatBounds();
@@ -139,7 +135,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
       
       // Increase the base zoom level and adjust the range
       let zoom = Math.floor(Math.log2(360 / maxDistance)) + 1;
-      zoom = Math.min(Math.max(zoom, 4), 13); // Adjust zoom range to 4-13
+      zoom = Math.min(Math.max(zoom, 6), 15); // Adjust zoom range to 6-15
 
       mapInstance.current.fitBounds(bounds, {
         padding: { top: 50, bottom: 50, left: 50, right: 50 },
@@ -149,18 +145,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
       });
     } else {
       // If no destinations, reset to global view
-      mapInstance.current.flyTo({
-        center: [0, 0],
-        zoom: 1,
-        pitch: 0,
-        bearing: 0
-      });
-    }
-  };
-
-  const resetMapState = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    if (mapInstance.current) {
       mapInstance.current.flyTo({
         center: [0, 0],
         zoom: 1,
@@ -183,22 +167,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-      <button
-        onClick={resetMapState}
-        style={{
-          position: 'absolute',
-          bottom: '10px',
-          left: '10px',
-          zIndex: 1,
-          padding: '8px 12px',
-          backgroundColor: 'white',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Reset Map
-      </button>
     </div>
   );
 };
