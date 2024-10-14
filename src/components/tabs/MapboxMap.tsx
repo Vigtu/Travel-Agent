@@ -21,6 +21,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<mapboxgl.Map | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
 
   const saveMapState = () => {
     if (mapInstance.current) {
@@ -47,16 +48,14 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
     
     const initializeMap = async () => {
       try {
-        const savedState = loadMapState();
         const map = new mapboxgl.Map({
           container: mapContainer.current,
           style: 'mapbox://styles/mapbox/standard',
-          center: savedState?.center || [2.2945, 48.8584], // Eiffel Tower coordinates as default
-          zoom: savedState?.zoom || 7, // Adjusted to a more distant view
-          pitch: savedState?.pitch || 60,
-          bearing: savedState?.bearing || -60,
-          projection: 'mercator', // Changed from 'globe' to 'mercator'
-          worldview: 'FR' // Set initial worldview to France
+          center: [0, 0],
+          zoom: 1,
+          pitch: 0,
+          bearing: 0,
+          projection: 'globe'
         });
 
         map.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -105,10 +104,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
   const updateMarkers = async () => {
     if (!mapInstance.current) return;
 
-    const existingMarkers = document.getElementsByClassName('mapboxgl-marker');
-    while (existingMarkers[0]) {
-      existingMarkers[0].remove();
-    }
+    // Remove existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
 
     const bounds = new mapboxgl.LngLatBounds();
 
@@ -118,11 +116,12 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
         const data = await response.json();
         if (data.features && data.features.length > 0) {
           const [lng, lat] = data.features[0].center;
-          new mapboxgl.Marker()
+          const marker = new mapboxgl.Marker()
             .setLngLat([lng, lat])
             .setPopup(new mapboxgl.Popup().setHTML(`<h3>${dest.name}</h3>`))
             .addTo(mapInstance.current);
           
+          markersRef.current.push(marker);
           bounds.extend([lng, lat]);
         }
       } catch (error) {
@@ -131,10 +130,30 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
     }
 
     if (!bounds.isEmpty()) {
-      mapInstance.current.fitBounds(bounds, { 
-        padding: 50,
-        pitch: 60,
-        bearing: -60
+      // Calculate the appropriate zoom level
+      const boundsArray = bounds.toArray();
+      const maxDistance = Math.max(
+        Math.abs(boundsArray[0][0] - boundsArray[1][0]),
+        Math.abs(boundsArray[0][1] - boundsArray[1][1])
+      );
+      
+      // Increase the base zoom level and adjust the range
+      let zoom = Math.floor(Math.log2(360 / maxDistance)) + 1;
+      zoom = Math.min(Math.max(zoom, 4), 13); // Adjust zoom range to 4-13
+
+      mapInstance.current.fitBounds(bounds, {
+        padding: { top: 50, bottom: 50, left: 50, right: 50 },
+        pitch: 45,
+        bearing: 0,
+        maxZoom: zoom
+      });
+    } else {
+      // If no destinations, reset to global view
+      mapInstance.current.flyTo({
+        center: [0, 0],
+        zoom: 1,
+        pitch: 0,
+        bearing: 0
       });
     }
   };
@@ -143,10 +162,10 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
     localStorage.removeItem(STORAGE_KEY);
     if (mapInstance.current) {
       mapInstance.current.flyTo({
-        center: [2.2945, 48.8584],
-        zoom: 5,
-        pitch: 60,
-        bearing: -60
+        center: [0, 0],
+        zoom: 1,
+        pitch: 0,
+        bearing: 0
       });
     }
   };

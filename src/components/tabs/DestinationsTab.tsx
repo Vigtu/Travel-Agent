@@ -18,7 +18,7 @@ interface DestinationsTabProps {
 }
 
 const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps) => {
-  const [destinations, setDestinations] = useLocalStorage<{ name: string }[]>('destinations', []);
+  const [destinations, setDestinations] = useState<{ name: string }[]>([]);
   const [newDestination, setNewDestination] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -26,15 +26,26 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
   const [tripPlan, setTripPlan] = useState<ParsedTripPlan | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [mapKey, setMapKey] = useState(0);
 
   useEffect(() => {
     setIsConfirmButtonEnabled(destinations.length >= 1 && destinations.length <= 3);
   }, [destinations]);
 
+  useEffect(() => {
+    // Clear destinations and add the new one from tripDetails
+    if (tripDetails.destinations) {
+      setDestinations([{ name: tripDetails.destinations }]);
+      setMapKey(prevKey => prevKey + 1);
+    }
+  }, [tripDetails]);
+
   const addDestination = () => {
     if (newDestination && destinations.length < 3) {
-      setDestinations([...destinations, { name: newDestination }]);
+      const updatedDestinations = [...destinations, { name: newDestination }];
+      setDestinations(updatedDestinations);
       setNewDestination('');
+      setMapKey(prevKey => prevKey + 1);
     } else if (destinations.length >= 3) {
       toast({
         title: "Maximum Destinations Reached",
@@ -45,7 +56,9 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
   };
 
   const removeDestination = (index: number) => {
-    setDestinations(destinations.filter((_, i) => i !== index));
+    const updatedDestinations = destinations.filter((_, i) => i !== index);
+    setDestinations(updatedDestinations);
+    setMapKey(prevKey => prevKey + 1);
   };
 
   const handleConfirmDestinations = async () => {
@@ -140,6 +153,7 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
           </div>
         }>
           <MapboxMap 
+            key={mapKey}
             destinations={destinations} 
             onMapLoaded={handleMapLoaded}
           />
