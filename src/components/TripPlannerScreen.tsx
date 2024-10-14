@@ -55,7 +55,7 @@ const TripPlannerScreen = ({ tripDetails }: TripPlannerScreenProps) => {
           </TabsList>
           <Progress 
             value={progress} 
-            className="w-full h-0.5 bg-gray-200" 
+            className="w-full h-1 bg-gray-200" 
             aria-label={`Trip planning progress: ${progress}% complete`}
           />
           <div className="flex-grow overflow-hidden">

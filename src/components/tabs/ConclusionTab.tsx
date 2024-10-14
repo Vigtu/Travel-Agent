@@ -1,4 +1,3 @@
-import React from 'react';
 import type { ParsedTripPlan } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';

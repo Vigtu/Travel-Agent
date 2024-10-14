@@ -41,7 +41,7 @@ export default function TravelConfirmationModal({
               <div className="flex flex-col items-center justify-center mb-6">
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                   className="inline-block mb-4"
                 >
                   <Globe className="h-12 w-12 text-green-500" />

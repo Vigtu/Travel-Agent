@@ -57,7 +57,7 @@ const TipsTab = ({ tripPlan }: TipsTabProps) => {
     const parts = content.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={index}>{part.slice(2, -2)}</strong>;
+        return <strong key={`strong-${index}-${part.slice(2, -2)}`}>{part.slice(2, -2)}</strong>;
       }
       return part;
     });
