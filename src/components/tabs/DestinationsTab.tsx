@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import type { TripDetails, ParsedTripPlan } from '@/types';
 import { toast } from '@/hooks/use-toast';
-import { MapPin, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import TravelConfirmationModal from '@/components/TravelConfirmationModal';
 import { getTravelPlan } from '@/api/travelApi';
 import { parseTripPlan } from '@/utils/tripPlanParser';
@@ -22,7 +22,7 @@ const DestinationsTab = ({ tripDetails, onTripPlanUpdate }: DestinationsTabProps
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isConfirmButtonEnabled, setIsConfirmButtonEnabled] = useState(false);
-  const [tripPlan, setTripPlan] = useState<ParsedTripPlan | null>(null);
+  const [_tripPlan, setTripPlan] = useState<ParsedTripPlan | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
   const [mapKey, setMapKey] = useState(0);
 

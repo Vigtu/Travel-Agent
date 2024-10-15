@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { ParsedTripPlan } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sun, Cloud, CloudRain, Snowflake, Calendar, MapPin, Coffee, Utensils, Camera, Bed, Sunrise, Sunset, Moon, Bus } from 'lucide-react';
+import { Sun, Cloud, CloudRain, Snowflake, Calendar, MapPin, Coffee, Utensils, Bed, Sunrise, Sunset, Moon, Bus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ActivitiesTabProps {
@@ -69,7 +69,7 @@ const ActivitiesTab = ({ tripPlan }: ActivitiesTabProps) => {
   return (
     <ScrollArea className="h-full">
       <div className="space-y-8 p-6">
-        {tripPlan.activities.map((day, index) => (
+        {tripPlan.activities.map((day) => (
           <Card key={`day-${day.day}`} className="bg-gradient-to-br from-green-50 to-blue-50 shadow-lg hover:shadow-xl transition-shadow duration-300 border-none overflow-hidden">
             <CardHeader 
               className="bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-t-lg cursor-pointer"

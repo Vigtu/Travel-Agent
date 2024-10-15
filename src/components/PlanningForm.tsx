@@ -42,7 +42,19 @@ const PlanningForm = ({ onSubmit }: PlanningFormProps) => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setIsLoading(false);
-    onSubmit(values);
+    const tripDetails: TripDetails = {
+      name: values.tripName,
+      destinations: values.country,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      budget: 0, // Set a default value or add to form
+      dateFlexibility: 0, // Set a default value or add to form
+      flightPreferences: '', // Set a default value or add to form
+      numAdults: 1, // Set a default value or add to form
+      numChildren: 0, // Set a default value or add to form
+      origin: '', // Set a default value or add to form
+    };
+    onSubmit(tripDetails);
   };
 
   return (

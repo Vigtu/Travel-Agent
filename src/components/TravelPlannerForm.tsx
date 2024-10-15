@@ -134,8 +134,8 @@ export default function TravelPlannerForm({ onSubmit }: TravelPlannerFormProps) 
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={formData.startDate}
-                onSelect={(date: Date | null) => handleDateChange(date, 'startDate')}
+                selected={formData.startDate || undefined}
+                onSelect={(date: Date | undefined) => handleDateChange(date ?? null, 'startDate')}
                 disabled={(date) =>
                   date < new Date() || date > new Date("2030-01-01")
                 }
@@ -156,8 +156,8 @@ export default function TravelPlannerForm({ onSubmit }: TravelPlannerFormProps) 
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={formData.endDate}
-                onSelect={(date: Date | null) => handleDateChange(date, 'endDate')}
+                selected={formData.endDate || undefined}
+                onSelect={(date: Date | undefined) => handleDateChange(date ?? null, 'endDate')}
                 disabled={(date) =>
                   date <= (formData.startDate || new Date()) || date > new Date("2030-01-01")
                 }

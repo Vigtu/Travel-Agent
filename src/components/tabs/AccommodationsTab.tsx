@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { ParsedTripPlan } from '@/types';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

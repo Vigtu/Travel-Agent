@@ -42,6 +42,8 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ destinations, onMapLoaded }) => {
     
     const initializeMap = async () => {
       try {
+        if (!mapContainer.current) return;
+
         const map = new mapboxgl.Map({
           container: mapContainer.current,
           style: 'mapbox://styles/mapbox/standard',
